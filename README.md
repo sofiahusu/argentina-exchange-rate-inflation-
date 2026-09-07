@@ -108,13 +108,13 @@ The monthly percentage variation in the exchange rate (`variacion_dolar`) was al
 The transformation can also be observed visually in the time-series plots below.
 ### Monthly Inflation Rate
 
-![Monthly inflation rate](images/inflation_time_series.png)
+![Monthly inflation rate](inflation_time_series.png)
 
 The monthly inflation rate exhibits substantial changes in its level and volatility over the sample, with particularly pronounced movements during 2023–2024.
 
 ### Change in Monthly Inflation
 
-![Change in monthly inflation](images/inflation_time_series_diff.png)
+![Change in monthly inflation](inflation_time_ series_diff.png)
 
 After first-differencing the monthly inflation rate, the resulting series fluctuates around zero, although periods of markedly higher volatility remain visible, particularly around 2023–2024. This visual pattern is consistent with the subsequent investigation of conditional heteroskedasticity. 
 ## Identification of Mean Dynamics
