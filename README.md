@@ -64,31 +64,35 @@ The analysis followed the following process:
    - The monthly inflation rate (`inflacion_mensual`) showed ambiguous/non-stationary behavior.
    - The monthly inflation rate was therefore first-differenced, producing `delta_inflacion`, which measures the month-to-month change in the inflation rate in percentage points. This transformed series was found to be stationary.
    - For the exchange rate, the analysis used its monthly percentage variation (`variacion_dolar`) rather than the exchange-rate level. This series was found to be stationary and therefore did not require additional differencing.
-
-3. **Identification of mean dynamics**
-   - ACF and PACF plots were examined.
-   - Alternative autoregressive specifications were compared using AIC and BIC.
+3. **Initial identification of mean dynamics**
+   - ACF and PACF plots of the stationary change in monthly inflation were examined to identify potential short-run serial dependence.
+   - Alternative ARIMA specifications were explored using AIC and BIC as an initial assessment of the series' dynamic structure.
 
 4. **Incorporation of the exchange rate**
-   - Monthly exchange-rate variation was included as an explanatory variable because the central research question concerns its relationship with inflation dynamics.
-   - Alternative specifications with additional exchange-rate lags were also evaluated.
+   - Monthly exchange-rate variation was incorporated as a regressor because the central research question concerns its relationship with inflation dynamics.
+   - Specifications with additional exchange-rate lags were also evaluated.
 
 5. **Conditional heteroskedasticity**
-   - ARCH-LM tests revealed evidence of ARCH effects.
-   - ARCH(1), ARCH(2), and GARCH(1,1) specifications were estimated and compared.
+   - ARCH-LM tests revealed evidence of conditional heteroskedasticity.
+   - ARCH(1), ARCH(2), and GARCH(1,1) variance specifications were estimated and compared using information criteria and residual diagnostics.
+   - ARCH(2) adequately captured the conditional variance dynamics, but significant autocorrelation remained in the standardized residuals.
 
-6. **Model re-specification**
-   - Although the volatility models captured conditional heteroskedasticity, residual autocorrelation indicated that the conditional mean remained under-specified.
-   - AR(0), AR(1), and AR(2) mean specifications were therefore compared while retaining the exchange-rate variable and ARCH(2) variance structure.
+6. **Mean re-specification**
+   - The remaining serial correlation indicated that the conditional mean was under-specified.
+   - ACF and PACF plots of the standardized residuals suggested remaining short-run dependence, particularly around the second lag.
+   - AR(0), AR(1), and AR(2) conditional mean specifications were therefore compared while retaining the exchange-rate regressor and ARCH(2) variance structure.
+   - Both AIC and BIC favored the AR(2)-X-ARCH(2) specification.
 
-7. **Final diagnostics**
+7. **Final diagnostic checking**
    - Ljung–Box tests were applied to standardized residuals and squared standardized residuals.
-   - ARCH-LM tests were used to check for remaining conditional heteroskedasticity.
+   - ARCH-LM tests were used to assess remaining conditional heteroskedasticity.
    - ACF and PACF plots were inspected for remaining serial dependence.
+   - The final standardized residuals were compatible with white noise.
    - CUSUM was used as an additional parameter-stability diagnostic.
 
 8. **Granger causality**
    - Granger causality tests were used as a complementary analysis of the predictive relationship between exchange-rate movements and changes in inflation.
+     
 ## Stationarity Results
 
 Stationarity was assessed before model estimation to avoid modeling relationships between non-stationary series.
@@ -123,7 +127,129 @@ The ACF and PACF of `delta_inflacion` were examined to identify potential short-
 
 ![ACF/PACF FIGURE](ACF_PACF.png)
 
-The correlograms suggested short-run serial dependence, particularly around the second lag. Rather than selecting the autoregressive order solely from visual inspection, alternative specifications were subsequently compared using information criteria and residual diagnostics.
+Both correlograms show significant negative dependence around the second lag, while no simple cutoff pattern clearly identifies a unique AR or MA specification. Therefore, the correlograms were used as an initial identification tool rather than as the sole criterion for model selection.
+
+## Initial ARIMA Specification
+
+Following the stationarity analysis and the inspection of the ACF and PACF, alternative ARIMA specifications were estimated as an initial characterization of the dynamics of monthly inflation.
+
+The candidate models were compared using the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC):
+
+| Model | AIC | BIC |
+|---|---:|---:|
+| **ARIMA(2,1,2)** | **462.363** | 476.044 |
+| ARIMA(2,1,0) | 466.272 | **474.481** |
+| ARIMA(2,1,1) | 467.594 | 478.539 |
+| ARIMA(0,1,2) | 468.829 | 477.038 |
+| ARIMA(1,1,2) | 470.522 | 481.466 |
+| ARIMA(0,1,0) | 475.358 | 478.094 |
+| ARIMA(1,1,1) | 476.226 | 484.435 |
+| ARIMA(0,1,1) | 477.210 | 482.683 |
+| ARIMA(1,1,0) | 477.308 | 482.781 |
+
+AIC favored the **ARIMA(2,1,2)** specification, while BIC favored the more parsimonious **ARIMA(2,1,0)**. ARIMA(2,1,2) was initially retained under the AIC criterion as an exploratory specification of the conditional mean.
+
+This specification served as an initial modeling step rather than the final model. The exchange-rate variable was subsequently incorporated to address the main research question.
+
+## Exchange Rate and Initial ARIMAX Specification
+
+Monthly exchange-rate variation was incorporated as a regressor because the central research question concerns the relationship between exchange-rate movements and inflation dynamics.
+
+As shown in the stationarity analysis, the ADF test strongly rejected the presence of a unit root in `variacion_dolar` (ADF = -8.439, p < 0.001). The variable was therefore included as its stationary monthly percentage change, without additional differencing. Using the stationary percentage-change series rather than the exchange-rate level also reduces the risk of estimating a spurious time-series relationship.
+
+The initial ARIMA(2,1,2) specification was then extended by including contemporaneous monthly exchange-rate variation as an external regressor.
+
+### Initial ARIMAX Results
+
+| Parameter | Estimate | p-value |
+|---|---:|---:|
+| Exchange-rate variation | **0.116** | **<0.001** |
+| AR(1) | -0.119 | 0.508 |
+| AR(2) | -0.960 | <0.001 |
+| MA(1) | 0.086 | 0.675 |
+| MA(2) | 0.955 | <0.001 |
+
+The resulting model achieved an **AIC of 415.254** and a **BIC of 431.671**.
+
+The coefficient on contemporaneous exchange-rate variation was positive and statistically significant. A one-percentage-point increase in monthly exchange-rate variation was associated with an approximately **0.116 percentage-point increase in monthly inflation**, conditional on the dynamics represented by this initial specification.
+
+However, several AR and MA parameters were not individually statistically significant, and satisfactory modeling of the conditional mean does not imply that the residual variance is adequately specified. Residual diagnostics were therefore conducted before accepting the model.
+
+## Conditional Heteroskedasticity
+
+The residuals from the initial ARIMAX specification were tested for ARCH effects using the **Engle ARCH-LM test**.
+
+The null hypothesis of the ARCH-LM test is that no ARCH effects are present in the residuals.
+
+| Lag | LM Statistic | p-value |
+|---:|---:|---:|
+| 3 | 11.975 | 0.008 |
+| 6 | 13.737 | 0.033 |
+| 12 | 21.490 | 0.044 |
+
+The null hypothesis was rejected at the 5% significance level across all three lag specifications, providing evidence of **conditional heteroskedasticity**.
+
+Although the ARIMAX specification captured important conditional mean dynamics, the ARCH-LM results indicated that the variance of the innovations was not constant and exhibited temporal dependence.
+
+This motivated extending the analysis to explicit ARCH and GARCH conditional variance models.
+
+### Volatility Model Selection
+
+Three alternative volatility specifications were estimated and compared: ARCH(1), ARCH(2), and GARCH(1,1).
+
+| Volatility specification | AIC | BIC | Log-Likelihood |
+|---|---:|---:|---:|
+| ARCH(1) | 398.558 | 409.503 | -195.279 |
+| **ARCH(2)** | **383.996** | **397.677** | **-186.998** |
+| GARCH(1,1) | 386.728 | 400.409 | -188.364 |
+
+Among these candidate specifications, ARCH(2) achieved the lowest AIC and BIC. However, information criteria alone do not establish model adequacy. The standardized residuals and squared standardized residuals were therefore examined to assess whether the selected variance specification adequately captured the remaining temporal structure.
+### Volatility Model Diagnostics
+
+Residual diagnostics revealed an important distinction between the conditional mean and variance specifications.
+
+For the ARCH(2) model, the Ljung–Box tests applied to the squared standardized residuals did not reject the null hypothesis of no serial dependence:
+
+| Diagnostic | Lag 6 | Lag 12 |
+|---|---:|---:|
+| Ljung–Box: standardized residuals | 0.003 | 0.001 |
+| Ljung–Box: squared standardized residuals | 0.506 | 0.367 |
+
+Similarly, the ARCH-LM tests on the ARCH(2) standardized residuals produced p-values of 0.889, 0.505, and 0.192 at lags 3, 6, and 12, respectively.
+
+These results suggested that the ARCH(2) specification successfully captured the main conditional variance dynamics.
+
+However, the Ljung–Box tests on the standardized residuals themselves remained statistically significant. This indicated that serial dependence was still present in the residuals even after modeling conditional volatility.
+
+The remaining dependence therefore pointed to an **under-specified conditional mean rather than remaining ARCH effects**. This motivated a re-specification of the mean equation.
+
+### Residual Autocorrelation Structure
+
+To investigate the remaining serial dependence, the ACF and PACF of the standardized residuals from the ARCH(2) specification were examined.
+
+![ACF and PACF of standardized residuals](Standardized_Residuals_acf_pacf.png)
+
+The correlograms showed remaining short-run dependence, with a particularly noticeable pattern around the second lag. This provided evidence that additional autoregressive structure in the conditional mean should be considered.
+
+Rather than selecting the autoregressive order solely from the correlograms, alternative mean specifications were subsequently estimated and compared.
+
+## Mean Re-specification and Model Selection
+
+To address the remaining serial correlation, AR(0), AR(1), and AR(2) conditional mean specifications were estimated while retaining the contemporaneous exchange-rate regressor and the ARCH(2) conditional variance structure.
+
+The competing specifications were compared using AIC, BIC, and log-likelihood:
+
+| Model | AIC | BIC | Log-Likelihood |
+|---|---:|---:|---:|
+| AR(0)-X-ARCH(2) | 383.996 | 397.677 | -186.998 |
+| AR(1)-X-ARCH(2) | 376.754 | 393.119 | -182.377 |
+| **AR(2)-X-ARCH(2)** | **370.379** | **389.408** | **-178.189** |
+
+The **AR(2)-X-ARCH(2)** specification achieved the lowest AIC and BIC and the highest log-likelihood among the candidate models.
+
+The improvement obtained by introducing two autoregressive terms was also consistent with the residual dependence observed in the previous specification. The AR(2)-X-ARCH(2) model was therefore selected for final diagnostic evaluation.
+
+## Final Model: AR(2)-X-ARCH(2) 
   
 ## Limitations and Further Research
 
