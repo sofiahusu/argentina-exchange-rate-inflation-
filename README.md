@@ -249,8 +249,115 @@ The **AR(2)-X-ARCH(2)** specification achieved the lowest AIC and BIC and the hi
 
 The improvement obtained by introducing two autoregressive terms was also consistent with the residual dependence observed in the previous specification. The AR(2)-X-ARCH(2) model was therefore selected for final diagnostic evaluation.
 
-## Final Model: AR(2)-X-ARCH(2) 
-  
+## Final Model: AR(2)-X-ARCH(2)
+
+Based on the model-selection process, the **AR(2)-X-ARCH(2)** specification was selected as the final model.
+
+The model combines three components:
+
+- an **AR(2)** structure to capture short-run dynamics in changes in monthly inflation;
+- contemporaneous monthly exchange-rate variation as an external regressor;
+- an **ARCH(2)** process to model time-varying conditional volatility.
+
+### Conditional Mean
+
+The conditional mean equation is:
+
+**Δπ(t) = −0.278 − 0.250Δπ(t−1) − 0.212Δπ(t−2) + 0.105gᴱ(t) + ε(t)**
+
+where:
+
+- **Δπ(t)** is the month-to-month change in the monthly inflation rate, measured in percentage points.
+- **gᴱ(t)** is the monthly percentage change in the exchange rate.
+- **ε(t)** is the innovation at time t.
+
+### Conditional Variance
+
+The ARCH(2) conditional variance equation is:
+
+**σ²(t) = 0.753 + 0.264ε²(t−1) + 0.269ε²(t−2)**
+
+This specification allows the conditional variance of inflation innovations to depend on the magnitude of shocks observed during the previous two periods.
+
+### Estimated Coefficients
+
+| Component | Coefficient | p-value |
+|---|---:|---:|
+| Constant | -0.278 | 0.022 |
+| Δ Inflation (t-1) | -0.250 | 0.022 |
+| Δ Inflation (t-2) | -0.212 | 0.020 |
+| Exchange-rate variation | 0.105 | <0.001 |
+| ARCH ω | 0.753 | <0.001 |
+| ARCH α₁ | 0.264 | 0.088 |
+| ARCH α₂ | 0.269 | 0.076 |
+
+The exchange-rate coefficient is positive and statistically significant. Conditional on the autoregressive dynamics included in the model, a one-percentage-point increase in monthly exchange-rate variation is associated with an approximately **0.105 percentage-point increase in the change in monthly inflation**.
+
+The negative coefficients on the first and second lags of `delta_inflacion` indicate short-run corrective dynamics: increases in inflation acceleration tend to be followed by movements in the opposite direction.
+
+The ARCH coefficients indicate that past shocks contribute to current conditional volatility. Although the individual ARCH lag coefficients are not statistically significant at the 5% level, the ARCH(2) specification was retained based on the overall model-selection process and, importantly, its subsequent residual diagnostics.
+
+These coefficients describe conditional statistical relationships within the sample and should **not be interpreted as structural or causal effects**.
+
+## Final Model Diagnostics
+
+The adequacy of the selected AR(2)-X-ARCH(2) specification was evaluated through residual diagnostic tests.
+
+### Serial Correlation
+
+The Ljung–Box test was applied to the standardized residuals to determine whether significant serial dependence remained after the re-specification of the conditional mean.
+
+| Lag | Ljung–Box Statistic | p-value |
+|---:|---:|---:|
+| 6 | 5.675 | 0.461 |
+| 12 | 8.228 | 0.767 |
+| 18 | 14.015 | 0.728 |
+
+At all three lag specifications, the null hypothesis of no residual autocorrelation cannot be rejected at conventional significance levels.
+
+This represents a substantial improvement over the previous ARCH(2) specification, where the Ljung–Box test detected significant serial dependence in the standardized residuals.
+
+### Remaining Conditional Heteroskedasticity
+
+The squared standardized residuals were also examined using the Ljung–Box test:
+
+| Lag | Ljung–Box Statistic | p-value |
+|---:|---:|---:|
+| 6 | 6.169 | 0.405 |
+| 12 | 12.322 | 0.420 |
+| 18 | 17.681 | 0.477 |
+
+None of the tests reject the null hypothesis of no serial dependence in the squared standardized residuals, providing no evidence of remaining systematic volatility dynamics.
+
+The Engle ARCH-LM test provides consistent evidence:
+
+| Lag | LM Statistic | p-value |
+|---:|---:|---:|
+| 3 | 0.993 | 0.803 |
+| 6 | 6.438 | 0.376 |
+| 12 | 15.444 | 0.218 |
+
+The null hypothesis of no remaining ARCH effects cannot be rejected at any of the evaluated lags.
+
+### Residual Correlograms
+
+The ACF and PACF of the standardized residuals were also inspected to complement the formal diagnostic tests.
+
+![ACF and PACF of final standardized residuals](acf_pacf_final.png)
+
+No systematic autocorrelation pattern is apparent in the standardized residuals, consistent with the Ljung–Box results.
+
+The ACF of the squared standardized residuals was also examined:
+
+![ACF of squared standardized residuals](acf_residuals.png)
+
+The absence of a clear remaining dependence pattern is consistent with the Ljung–Box and ARCH-LM results.
+
+### Diagnostic Conclusion
+
+Taken together, the residual diagnostics provide no evidence of remaining serial correlation or conditional heteroskedasticity at conventional significance levels.
+
+The standardized residuals are therefore **compatible with white noise**, indicating that the AR(2)-X-ARCH(2) specification adequately captures the main conditional mean and variance dynamics present in the sample. 
 ## Limitations and Further Research
 
 The AR(2)-X-ARCH(2) specification models changes in monthly inflation as the dependent variable and includes contemporaneous exchange-rate variation as a regressor. Therefore, the estimated exchange-rate coefficient should be interpreted as a conditional statistical association rather than a causal effect.
