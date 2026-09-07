@@ -114,7 +114,7 @@ The monthly inflation rate exhibits substantial changes in its level and volatil
 
 ### Change in Monthly Inflation
 
-![Change in monthly inflation](inflation_time_ series_diff.png)
+![Change in monthly inflation](inflation_time_series_diff.png)
 
 After first-differencing the monthly inflation rate, the resulting series fluctuates around zero, although periods of markedly higher volatility remain visible, particularly around 2023–2024. This visual pattern is consistent with the subsequent investigation of conditional heteroskedasticity. 
 ## Identification of Mean Dynamics
