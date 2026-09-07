@@ -1,15 +1,18 @@
-# Modeling inflation dynamics in Argentina 
-Econometric analysis of the relationship between exchange rate movements and inflation dynamics in Argentina using time-series models.
+# Modeling Inflation Dynamics in Argentina
 
-This project develops a time-series model to analyze inflation dynamics in Argentina, drawing inspiration from the Box–Jenkins methodology.
+*Econometric analysis of the relationship between exchange-rate movements and inflation dynamics in Argentina using time-series models.*
 
-Unlike a traditional Box–Jenkins forecasting exercise, the prediction stage is intentionally omitted. The objective is not to forecast future inflation, but to use the modeling process to investigate the following research question:
+This project develops a time-series model to analyze inflation dynamics in Argentina and examine their relationship with monthly exchange-rate movements.
 
-> **Are monthly exchange rate movements associated with changes in Argentina's inflation rate, and what are the temporal dynamics of this relationship?**
+The modeling strategy is inspired by the iterative **identification–estimation–diagnostic checking** logic of the Box–Jenkins methodology. Rather than focusing on forecasting, the analysis uses this iterative process to investigate the following research question:
 
-The analysis follows an iterative model-building approach: examining stationarity, identifying the dynamics of the conditional mean, testing for conditional heteroskedasticity, comparing alternative specifications, and evaluating the final model through residual diagnostics.
+> **Are monthly exchange-rate movements associated with changes in Argentina's inflation rate, and what are the temporal dynamics of this relationship?**
 
-The resulting specification is an **AR(2)-X-ARCH(2) model**, where changes in monthly inflation are modeled as a function of their own past dynamics and the monthly variation in the exchange rate, while ARCH effects capture volatility clustering.
+The analysis examines the stationarity properties of the series, identifies the dynamics of the conditional mean, tests for conditional heteroskedasticity, compares alternative model specifications, and evaluates the selected model through residual diagnostics.
+
+The resulting specification is an **AR(2)-X-ARCH(2) model**, in which the change in monthly inflation is modeled using two autoregressive terms and the contemporaneous monthly percentage change in the exchange rate, while an ARCH(2) process captures conditional volatility.
+
+The model is intended to characterize **statistical associations and temporal dynamics**, rather than identify a causal effect of exchange-rate movements on inflation.
 
 ## Data
 
@@ -31,6 +34,15 @@ The latter is defined as:
 
 
 Therefore, `delta_inflacion` captures the **acceleration or deceleration of monthly inflation**, measured in percentage points.
+
+## Tools and Technologies
+
+- **Python**
+  - **pandas** — data cleaning, transformation, and time-series preparation
+  - **NumPy** — numerical operations
+  - **statsmodels** — stationarity tests, ARIMA/ARIMAX estimation, Granger causality, Ljung–Box tests, and CUSUM diagnostics
+  - **arch** — ARCH/GARCH estimation and volatility modeling
+  - **Matplotlib** — time-series and diagnostic visualizations
 
 ---
 
@@ -77,5 +89,46 @@ The analysis followed the following process:
 
 8. **Granger causality**
    - Granger causality tests were used as a complementary analysis of the predictive relationship between exchange-rate movements and changes in inflation.
+## Stationarity Results
+
+Stationarity was assessed before model estimation to avoid modeling relationships between non-stationary series.
+
+| Variable | Test | Statistic | p-value | Interpretation |
+|---|---|---:|---:|---|
+| Monthly inflation | ADF | -2.354 | 0.155 | Unit root cannot be rejected |
+| Monthly inflation | KPSS | 0.381 | 0.085 | Stationarity is not rejected at 5% |
+| Change in monthly inflation | ADF | -5.004 | <0.001 | Stationary |
+| Change in monthly inflation | KPSS | 0.095 | >0.10 | Stationarity is not rejected |
+| Monthly exchange-rate variation | ADF | -8.439 | <0.001 | Stationary |
+
+The ADF and KPSS tests provided mixed evidence regarding the stationarity of the monthly inflation rate. After first-differencing the inflation rate, both tests supported treating the resulting series (`delta_inflacion`) as stationary.
+
+The monthly percentage variation in the exchange rate (`variacion_dolar`) was also found to be stationary and was therefore included without additional differencing.
+
+The transformation can also be observed visually in the time-series plots below.
+### Monthly Inflation Rate
+
+![Monthly inflation rate](images/inflation_time_series.png)
+
+The monthly inflation rate exhibits substantial changes in its level and volatility over the sample, with particularly pronounced movements during 2023–2024.
+
+### Change in Monthly Inflation
+
+![Change in monthly inflation](images/inflation_time_series_diff.png)
+
+After first-differencing the monthly inflation rate, the resulting series fluctuates around zero, although periods of markedly higher volatility remain visible, particularly around 2023–2024. This visual pattern is consistent with the subsequent investigation of conditional heteroskedasticity. 
+## Identification of Mean Dynamics
+
+The ACF and PACF of `delta_inflacion` were examined to identify potential short-run dependence in the conditional mean.
+
+![ACF/PACF FIGURE](ACF_PACF.png)
+
+The correlograms suggested short-run serial dependence, particularly around the second lag. Rather than selecting the autoregressive order solely from visual inspection, alternative specifications were subsequently compared using information criteria and residual diagnostics.
   
-     (I'll continue tomorrow)
+## Limitations and Further Research
+
+The AR(2)-X-ARCH(2) specification models changes in monthly inflation as the dependent variable and includes contemporaneous exchange-rate variation as a regressor. Therefore, the estimated exchange-rate coefficient should be interpreted as a conditional statistical association rather than a causal effect.
+
+Granger causality tests indicate bidirectional predictive relationships between exchange-rate movements and changes in inflation, suggesting that the two variables may interact dynamically rather than follow a strictly one-directional relationship.
+
+A natural extension of this analysis would be to model inflation and exchange-rate dynamics jointly within a Vector Autoregression (VAR) framework and examine their dynamic responses through impulse-response functions.
