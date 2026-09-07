@@ -358,10 +358,79 @@ The absence of a clear remaining dependence pattern is consistent with the Ljung
 Taken together, the residual diagnostics provide no evidence of remaining serial correlation or conditional heteroskedasticity at conventional significance levels.
 
 The standardized residuals are therefore **compatible with white noise**, indicating that the AR(2)-X-ARCH(2) specification adequately captures the main conditional mean and variance dynamics present in the sample. 
+
+## Granger Causality Analysis
+
+As a complementary analysis, Granger causality tests were conducted to examine whether past values of one variable contain additional information for predicting the other.
+
+Two directions were evaluated:
+
+1. **Exchange-rate variation → change in monthly inflation**
+2. **Change in monthly inflation → exchange-rate variation**
+
+### Exchange Rate → Inflation Dynamics
+
+The null hypothesis is that lagged exchange-rate movements do not provide additional predictive information for changes in monthly inflation.
+
+| Lag | F-statistic | p-value |
+|---:|---:|---:|
+| 1 | 14.871 | <0.001 |
+| 2 | 3.702 | 0.028 |
+| 3 | 3.981 | 0.010 |
+| 4 | 4.168 | 0.004 |
+| 5 | 2.739 | 0.023 |
+| 6 | 2.589 | 0.023 |
+
+The null hypothesis is rejected at the 5% significance level across lags 1–6. This indicates that past exchange-rate movements contain incremental predictive information for subsequent changes in monthly inflation.
+
+### Inflation Dynamics → Exchange Rate
+
+The reverse relationship was also examined.
+
+| Lag | F-statistic | p-value |
+|---:|---:|---:|
+| 1 | 11.090 | 0.001 |
+| 2 | 8.063 | <0.001 |
+| 3 | 5.096 | 0.002 |
+| 4 | 4.092 | 0.004 |
+| 5 | 3.327 | 0.008 |
+| 6 | 3.606 | 0.003 |
+
+The null hypothesis is also rejected at the 5% significance level across lags 1–6 in the reverse direction.
+
+Taken together, the results provide evidence of **bidirectional Granger predictability** between monthly exchange-rate variation and changes in monthly inflation during the sample period.
+
+This finding is important for interpretation. Granger causality measures **predictive precedence**, not structural economic causality. Therefore, these results do not establish that exchange-rate movements causally determine inflation, or vice versa. 
+
+## Parameter Stability
+
+As an additional diagnostic, a CUSUM test was used to examine parameter stability over the sample period.
+
+The test produced the following results:
+
+| Statistic | Value |
+|---|---:|
+| CUSUM statistic | 1.221 |
+| p-value | 0.102 |
+
+At the 5% significance level, the null hypothesis of parameter stability cannot be rejected.
+
+The recursive CUSUM statistic also remained within the 95% confidence bands throughout the sample.
+
+![CUSUM parameter stability test](CUSUM.png)
+
+These results provide no evidence of parameter instability at the 5% significance level.
+
+However, the test should not be interpreted as proof that no structural changes occurred during the sample period. Given the substantial macroeconomic changes experienced by Argentina between 2017 and 2026, parameter stability remains an important consideration when interpreting the model. 
+
 ## Limitations and Further Research
 
 The AR(2)-X-ARCH(2) specification models changes in monthly inflation as the dependent variable and includes contemporaneous exchange-rate variation as a regressor. Therefore, the estimated exchange-rate coefficient should be interpreted as a conditional statistical association rather than a causal effect.
 
 Granger causality tests indicate bidirectional predictive relationships between exchange-rate movements and changes in inflation, suggesting that the two variables may interact dynamically rather than follow a strictly one-directional relationship.
 
-A natural extension of this analysis would be to model inflation and exchange-rate dynamics jointly within a Vector Autoregression (VAR) framework and examine their dynamic responses through impulse-response functions.
+A useful robustness extension would be to estimate **lagged-only specifications**, replacing contemporaneous exchange-rate variation with its lagged values. This would help distinguish the contemporaneous association identified by the main model from the predictive contribution of past exchange-rate movements.
+
+A natural extension would also be to model inflation and exchange-rate dynamics jointly within a **Vector Autoregression (VAR)** framework and examine their dynamic responses through impulse-response functions.
+
+Finally, although the CUSUM test does not reject parameter stability at the 5% significance level, the sample covers a period of substantial macroeconomic instability in Argentina. Future research could therefore investigate potential structural breaks or regime changes using methods specifically designed for that purpose.
