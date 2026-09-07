@@ -417,11 +417,27 @@ At the 5% significance level, the null hypothesis of parameter stability cannot 
 
 The recursive CUSUM statistic also remained within the 95% confidence bands throughout the sample.
 
-![CUSUM parameter stability test](CUSUM.png)
+![CUSUM parameter stability test](CUSUM_english.png)
 
 These results provide no evidence of parameter instability at the 5% significance level.
 
 However, the test should not be interpreted as proof that no structural changes occurred during the sample period. Given the substantial macroeconomic changes experienced by Argentina between 2017 and 2026, parameter stability remains an important consideration when interpreting the model. 
+
+## Key Findings
+
+The analysis produced several main findings regarding the relationship between exchange-rate movements and inflation dynamics in Argentina.
+
+The selected AR(2)-X-ARCH(2) model identifies a **positive and statistically significant contemporaneous association** between monthly exchange-rate variation and changes in monthly inflation. The estimated coefficient of approximately **0.105** indicates that a one-percentage-point increase in monthly exchange-rate variation is associated with an approximately **0.105 percentage-point increase in the change in monthly inflation**, conditional on the autoregressive dynamics included in the model.
+
+The negative AR(1) and AR(2) coefficients indicate short-run corrective dynamics in inflation acceleration. In other words, increases in the rate at which monthly inflation is accelerating tend to be followed by movements in the opposite direction.
+
+The analysis also identified **time-varying conditional volatility**. ARCH effects detected in the initial specification motivated explicit modeling of the conditional variance, with ARCH(2) providing the preferred variance structure among the candidate models.
+
+After re-specifying both the conditional mean and variance, the final model showed no evidence of remaining serial correlation or ARCH effects at conventional significance levels. Its standardized residuals were therefore compatible with white noise.
+
+Finally, Granger causality tests identified **bidirectional predictive relationships** between exchange-rate movements and changes in inflation. Past exchange-rate movements contain information useful for predicting changes in inflation, while past changes in inflation also contain predictive information for exchange-rate movements.
+
+These findings characterize statistical and temporal relationships within the sample and should **not be interpreted as evidence of structural economic causality**.
 
 ## Limitations and Further Research
 
