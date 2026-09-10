@@ -249,6 +249,9 @@ The **AR(2)-X-ARCH(2)** specification achieved the lowest AIC and BIC and the hi
 
 The improvement obtained by introducing two autoregressive terms was also consistent with the residual dependence observed in the previous specification. The AR(2)-X-ARCH(2) model was therefore selected for final diagnostic evaluation.
 
+### Contribution of the Exchange-Rate Regressor
+To evaluate whether exchange-rate variation contributed explanatory information beyond inflation's own autoregressive dynamics, the AR(2)-X-ARCH(2) specification was compared with an otherwise equivalent AR(2)-ARCH(2) model. Including monthly exchange-rate variation reduced the AIC from 388.87 to 370.38 and the BIC from 405.18 to 389.41. The exchange-rate coefficient was also positive and statistically significant (β = 0.105, p < 0.001), supporting its inclusion in the conditional mean specification.
+
 ## Final Model: AR(2)-X-ARCH(2)
 
 Based on the model-selection process, the **AR(2)-X-ARCH(2)** specification was selected as the final model.
